@@ -1,0 +1,15 @@
+What is `kamusi'?
+=================
+
+"Kamusi" is the Kiswahili term for dictionary. Kamusi is a
+command-line interface to the Kiswahili-English Dictionary provided
+online at http://www.kamusi.org/. They have a fairly extensive list of
+Kiswahili words, in part with attached examples and notes. The raw
+data is freely available. This program converts the text files to a
+SQLite database and provides a command-line interface to search for
+words in that database.
+
+Primarily I wrote this program to avoid loading times of the website
+and use the keyboard more effectively. When I read Kiswahili texts or
+write emails, I often keep a terminal open on a second screen to
+quickly look up words.
