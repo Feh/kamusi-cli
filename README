@@ -13,3 +13,23 @@ Primarily I wrote this program to avoid loading times of the website
 and use the keyboard more effectively. When I read Kiswahili texts or
 write emails, I often keep a terminal open on a second screen to
 quickly look up words.
+
+Preparing kamusi
+================
+
+First of all, you need to download the required word files. They are
+located in plain text on the kamusi web page. Unless shipped with this
+script, run the following command:
+
+    $ xargs wget < kamusi_dictionary_files
+
+You should then have two files, `eall.txt' and `sall.txt', in the
+current working directory.
+
+The next step is to convert these files (which have an arguably
+strange syntax) to an sqlite database). Use conver.pl for this job:
+
+    $ perl convert.pl
+
+The command expects the files to be called {s,e}all.txt in the CWD and
+will create a file `words.db' in CWD.
