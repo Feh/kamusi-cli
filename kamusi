@@ -1,0 +1,138 @@
+#!/usr/bin/perl
+# (c) Julius Plenz
+
+# TODO
+# - command line arg support
+# - page-wise display
+# - sensible ordering function
+#   (grouping function?)
+
+use strict;
+use warnings;
+use DBI;
+use Term::ANSIColor;
+
+my $dbargs = {AutoCommit => 0, PrintError => 1};
+my $dbh = DBI->connect("dbi:SQLite:dbname=words.db", "", "", $dbargs);
+
+my $direction = "en"; # sw
+#$direction = "sw";
+my %property = (
+    "direction" , "en",
+    "type" , "",
+    "verbose" , 0,
+    "examples" , 1
+);
+
+
+# Optionen im Programm setzen:
+# set exact/search_desc/display_short
+
+while (1) {
+    print color 'bold';
+    print 'kamusi> ';
+    print color 'reset';
+    chomp ($_ = <STDIN>);
+    goto QUIT if /^\.q$/i;
+    next if /^\s*$/;
+    if ($_ =~ /^\./) {
+        set_property($_);
+    } else {
+        query_word($_);
+    }
+}
+
+sub set_property {
+    (my $prop, my $arg) = split / /;
+    SWITCH: {
+        $prop =~ /.en/ && do {
+            $property{"direction"} = "en";
+            print "now searching en -> sw.\n";
+            last;
+        };
+        $prop =~ /.sw/ && do {
+            $property{"direction"} = "sw";
+            print "now searching sw -> en.\n";
+            last;
+        };
+        $prop =~ /.v/ && do {
+            $property{"verbose"} = !$property{"verbose"};
+            print "verbose output turned " . ($property{"verbose"}?"on":"off") . ".\n";
+            last;
+        };
+        $prop =~ /.ex/ && do {
+            $property{"examples"} = !$property{"examples"};
+            print "example output turned " . ($property{"examples"}?"on":"off") . ".\n";
+            last;
+        };
+        $prop =~ /.t/ && do {
+            if (!defined ($arg)) {
+                $property{"type"} = "";
+                print "will display results of all types.\n";
+            } else {
+                $arg =~ s/^(\w+).*$/$1/;
+                $property{"type"} = $arg;
+                print "will only display results of type '$arg'.\n";
+            }
+            last;
+        };
+    }
+}
+
+sub query_word {
+    my $table;
+    my $word = shift;
+
+    $table = "english" if $property{"direction"} =~ /en/;
+    $table = "swahili" if $property{"direction"} =~ /sw/;
+    my $type_query = "";
+    if(defined($property{"type"}) && $property{"type"} !~ /^$/) {
+        $type_query = "AND part_of_speech LIKE '$property{type}'";
+    }
+
+    my $row;
+    my $q = $dbh->prepare("SELECT * FROM ".$table." WHERE ".$table."_word LIKE ? " .
+        $type_query . " ORDER BY part_of_speech ASC;");
+    $q->execute("$word");
+    while ($row = $q->fetchrow_hashref) {
+        display_entry($row);
+    }
+}
+
+
+sub display_entry {
+    #print "\n_______________________________________________________________________________\n";
+    my $entry = shift;
+    #print color 'bold';
+    printf("%s: %s = {{ %s }} \n", $$entry{"part_of_speech"},
+        $$entry{"swahili_word"}, $$entry{"english_word"});
+    #print color 'reset';
+    if($property{"verbose"} && ($$entry{"swahili_plural"} || $$entry{"english_plural"})) {
+        printf("%-38s  %-38s \n",
+            $$entry{"swahili_plural"}?"Pl. ".$$entry{"swahili_plural"}:"",
+            $$entry{"english_plural"}?"Pl. ".$$entry{"english_plural"}:"");
+    }
+    # examples
+    if ($property{"examples"}) {
+        print "    | Example: ".$$entry{"english_example"}."\n" if $$entry{"english_example"};
+        print "    | Example: ".$$entry{"swahili_example"}."\n" if $$entry{"swahili_example"};
+    }
+    if ($property{"verbose"}) {
+        # definitions
+        print "               | Def.: ".$$entry{"english_definition"}."\n" if $$entry{"english_definition"};
+        print "               | Def.: ".$$entry{"swahili_definition"}."\n" if $$entry{"swahili_definition"};
+        # class/type/terminol/dialect
+        if($$entry{"class"} || $$entry{"terminology"} || $$entry{"dialect"}) {
+            printf("    | %-10s  %-15s  %-20s\n",
+                $$entry{"class"}?"Class: ".$$entry{"class"}:"",
+                $$entry{"terminology"}?"Term.: ".$$entry{"terminology"}:"",
+                $$entry{"dialect"}?"Dialect: ".$$entry{"dialect"}:""
+            );
+        }
+    }
+}
+
+QUIT:
+print "kamusi exiting...\n";
+$dbh->disconnect();
+# vim:set nowrap et tw=4:
