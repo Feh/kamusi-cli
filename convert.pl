@@ -12,10 +12,11 @@ my $dbh = DBI->connect("dbi:SQLite:dbname=words.db", "", "", $dbargs);
 #
 #
 
-
-# (re)create the tables from scratch
+# recreate the tables from scratch
+# might throw an error message if the db has not existed in the first place.
 $dbh->do("drop table english");
 $dbh->do("drop table kiswahili");
+
 $dbh->do("CREATE TABLE english (class TEXT, derived_language TEXT, derived_word TEXT,
 dialect TEXT, english_definition TEXT, english_example TEXT, english_plural TEXT,
 english_word TEXT, note TEXT, part_of_speech TEXT, related_words TEXT,
