@@ -22,6 +22,33 @@ to control kamusi's behaviour.
   .ex           toggle the display of examples if provided [default: on]
   .q            quit kamusi; you can also achieve this with Ctrl-C
 
+Wildcards and Verb Prefixes
+===========================
+
+As of now, use the standard SQL wild cards (% for arbitrary match). Note that
+most verbs are in fact available with a leading hyphen only, so searching for
+the meaning of "nililia", you should precede the verb root with a hypen: -lia.
+
+Example Run
+===========
+
+Let's take an example: you occasionally head people sohuting something along
+the lines of "nia".
+
+    kamusi> .sw
+    now searching sw -> en.
+    kamusi> .ex
+    example output turned off.
+    kamusi> %nia
+        [ .. lots of output ... ]
+    kamusi> .t phrase
+    will only display results of type 'phrase'.
+    kamusi> %nia
+    phrase: nia = {{ it is clear }}
+    phrase: -ning'inia = {{ I have }}
+    phrase: -tania = {{ it is beyond his strength }}
+
+So there, you found it! :-)
 
 [1] the most common types are: adjective, adverb, noun, verb; to
     obtain a full list of types available, issue the following command:
