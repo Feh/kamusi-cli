@@ -1,0 +1,53 @@
+What is `kamusi'?
+=================
+
+"Kamusi" is the Kiswahili term for dictionary. Kamusi is a
+command-line interface to the Kiswahili-English Dictionary provided
+online at http://www.kamusi.org/. They have a fairly extensive list of
+Kiswahili words, in part with attached examples and notes. The raw
+data is freely available. This program converts the text files to a
+SQLite database and provides a command-line interface to search for
+words in that database.
+
+Primarily I wrote this program to avoid loading times of the website
+and use the keyboard more effectively. When I read Kiswahili texts or
+write emails, I often keep a terminal open on a second screen to
+quickly look up words.
+
+Preparing kamusi
+================
+
+First of all, you need to download the required word files. They are
+located in plain text on the kamusi web page. Unless shipped with this
+script, run the following command:
+
+    $ xargs wget -q < kamusi_dictionary_files
+
+You should then have two files, `eall.txt' and `sall.txt', in the
+current working directory.
+
+The next step is to convert these files (which have an arguably
+strange syntax) to an sqlite database). Use conver.pl for this job:
+
+    $ ./convert.pl
+
+The command expects the files to be called {s,e}all.txt in the CWD and
+will create a file `words.db' in CWD. Be preapred to wait a minute or
+so for this process to end, since the two files have 800,000+ lines of
+text that must be converted. (Once you did this step, however, kamusi
+will be very fast indeed.)
+
+Using kamusi
+============
+
+Simply invoke the kamusi program with ./kamusi. Preferably, install
+the `rlwrap' package, which sort of adds readline support on top of
+the program, so that you can use ^U and the like. My call to kamusi
+looks like this:
+
+    $ rlwrap perl kamusi
+
+Be warned that kamusi expects to find `words.db' in CWD (though this
+is likely to change and to be made configurable in the future).
+
+For further usage information, refer to the USAGE file.
