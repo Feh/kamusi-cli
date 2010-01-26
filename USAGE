@@ -1,0 +1,28 @@
+Usage
+=====
+
+Invoke kamusi preferably via
+
+    $ rlwrap perl kamusi
+
+When you simply enter a word, kamusi will output all matching words in
+the currently selected language together with their meaning and
+further descriptions.
+
+There are some simple commands, all of them beginning with a dot (.),
+to control kamusi's behaviour.
+
+  Command       Meaning
+  =======       =======
+  .en           swith the search language en->sw [this is the startup default]
+  .sw           swith the search language sw->en
+  .v            toggle verbose output [default: off]
+  .t [TYPE]     display only results of type TYPE, where TYPE is on of [1]
+                ommitting TYPE is equal to allowing all types be displayed.
+  .ex           toggle the display of examples if provided [default: on]
+  .q            quit kamusi; you can also achieve this with Ctrl-C
+
+
+[1] the most common types are: adjective, adverb, noun, verb; to
+    obtain a full list of types available, issue the following command:
+    $ grep Part\ of sall.txt | cut -d' ' -f4 | sort | uniq -c | sort -bgr
