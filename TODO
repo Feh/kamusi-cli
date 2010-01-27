@@ -17,3 +17,5 @@ TODO: plans
 * improve wildcard support [rewrite completely]
 * maybe implement something pager-like (or mutt-like) when there are many results
 * group resulting words together
+* do some heuristics on which words are more important in result
+* allow to create "standalone" version by somehow encoding the sqlite db within the program file
