@@ -14,11 +14,11 @@ to control kamusi's behaviour.
 
   Command       Meaning
   =======       =======
-  .en           swith the search language en->sw [this is the startup default]
-  .sw           swith the search language sw->en
+  .en           switch the search language en->sw [this is the startup default]
+  .sw           switch the search language sw->en
   .v            toggle verbose output [default: off]
   .t [TYPE]     display only results of type TYPE, where TYPE is on of [1]
-                ommitting TYPE is equal to allowing all types be displayed.
+                omitting TYPE is equal to allowing all types be displayed.
   .ex           toggle the display of examples if provided [default: on]
   .q            quit kamusi; you can also achieve this with Ctrl-C
 
@@ -27,12 +27,12 @@ Wildcards and Verb Prefixes
 
 As of now, use the standard SQL wild cards (% for arbitrary match). Note that
 most verbs are in fact available with a leading hyphen only, so searching for
-the meaning of "nililia", you should precede the verb root with a hypen: -lia.
+the meaning of "nililia", you should precede the verb root with a hyphen: -lia.
 
 Example Run
 ===========
 
-Let's take an example: you occasionally head people sohuting something along
+Let's take an example: you occasionally hear people shouting something along
 the lines of "nia".
 
     kamusi> .sw
