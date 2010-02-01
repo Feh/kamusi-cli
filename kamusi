@@ -1,12 +1,6 @@
 #!/usr/bin/perl
 # (c) Julius Plenz
 
-# TODO
-# - command line arg support
-# - page-wise display
-# - sensible ordering function
-#   (grouping function?)
-
 use strict;
 use warnings;
 use DBI;
@@ -36,7 +30,6 @@ set_property("examples", 0) if $opts{"E"}; # no examples
 set_property("squash", 1) if $opts{"s"};
 
 if($opts{"q"}) {
-    print STDERR "invoked query/batch mode\n";
     unless($ARGV[0]) {
         print STDERR "no word given on command line; exiting.";
         exit 1;
@@ -44,9 +37,6 @@ if($opts{"q"}) {
     query_word($ARGV[0]);
     goto QUIT;
 }
-
-# Optionen im Programm setzen:
-# set exact/search_desc/display_short
 
 show_prompt();
 while ($_ = <STDIN>) {
@@ -71,6 +61,7 @@ sub set_property {
     (my $prop, my $val) = @_;
     $property{$prop} = $val;
 }
+
 sub set_property_from_command {
     (my $prop, my $arg) = split / /;
     SWITCH: {
@@ -141,12 +132,10 @@ sub query_word {
 
 
 sub display_entry {
-    #print "\n_______________________________________________________________________________\n";
     my $entry = shift;
-    #print color 'bold';
+
     printf("%s: %s = {{ %s }} \n", $$entry{"part_of_speech"},
         $$entry{"swahili_word"}, $$entry{"english_word"});
-    #print color 'reset';
     if($property{"verbose"} && ($$entry{"swahili_plural"} || $$entry{"english_plural"})) {
         printf("%-38s  %-38s \n",
             $$entry{"swahili_plural"}?"Pl. ".$$entry{"swahili_plural"}:"",
@@ -203,4 +192,5 @@ BEGIN {
 QUIT:
 print STDERR "kamusi exiting...\n" unless $opts{"q"};
 $dbh->disconnect();
+
 # vim:set nowrap et ts=4:
