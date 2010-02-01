@@ -27,12 +27,12 @@ You should then have two files, `eall.txt' and `sall.txt', in the
 current working directory.
 
 The next step is to convert these files (which have an arguably
-strange syntax) to an sqlite database). Use conver.pl for this job:
+strange syntax) to an SQLite database. Use convert.pl for this job:
 
     $ ./convert.pl
 
 The command expects the files to be called {s,e}all.txt in the CWD and
-will create a file `words.db' in CWD. Be preapred to wait a minute or
+will create a file `words.db' in CWD. Be prepared to wait a minute or
 so for this process to end, since the two files have 800,000+ lines of
 text that must be converted. (Once you did this step, however, kamusi
 will be very fast indeed.)
