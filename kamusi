@@ -135,4 +135,4 @@ sub display_entry {
 QUIT:
 print "kamusi exiting...\n";
 $dbh->disconnect();
-# vim:set nowrap et tw=4:
+# vim:set nowrap et ts=4:
