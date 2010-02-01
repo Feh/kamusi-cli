@@ -111,6 +111,7 @@ sub set_property_from_command {
 sub query_word {
     my $table;
     my $word = shift;
+    my $entry_handler = $property{"squash"} ? \&squash_result : \&display_entry;
 
     $table = "english" if $property{"direction"} =~ /en/;
     $table = "swahili" if $property{"direction"} =~ /sw/;
@@ -128,8 +129,9 @@ sub query_word {
         $type_query . " ORDER BY part_of_speech ASC;");
     $q->execute("$word");
     while ($row = $q->fetchrow_hashref) {
-        display_entry($row);
+        &$entry_handler($row);
     }
+    display_squash_results() if $property{"squash"};
 }
 
 
@@ -162,6 +164,34 @@ sub display_entry {
                 $$entry{"dialect"}?"Dialect: ".$$entry{"dialect"}:""
             );
         }
+    }
+}
+
+BEGIN {
+    # only the most common types are stored!
+    my %buffer = (
+        "noun" => [],
+        "verb" => [],
+        "adjective" => [],
+        "adverb" => [],
+        "conjunction" => [],
+        "interjection" => [],
+        "pronoun" => [],
+        "preposition" => [],
+        "phrase" => [],
+    );
+    sub squash_result {
+        my $entry = shift;
+        push(@{$buffer{$$entry{"part_of_speech"}}},
+            ($property{"direction"} =~ "en") ?  $$entry{"swahili_word"} :
+                                                $$entry{"english_word"});
+    }
+    sub display_squash_results {
+        for my $type (keys %buffer) {
+            next if $#{$buffer{$type}} == -1;
+            print $type . ': ' . join('; ', @{$buffer{$type}}) . "\n";
+        }
+        %buffer = ();
     }
 }
 
