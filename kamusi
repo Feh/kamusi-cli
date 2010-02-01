@@ -28,11 +28,9 @@ my %property = (
 # Optionen im Programm setzen:
 # set exact/search_desc/display_short
 
-while (1) {
-    print color 'bold';
-    print 'kamusi> ';
-    print color 'reset';
-    chomp ($_ = <STDIN>);
+show_prompt();
+while ($_ = <STDIN>) {
+    chomp;
     goto QUIT if /^\.q$/i;
     next if /^\s*$/;
     if ($_ =~ /^\./) {
@@ -40,6 +38,13 @@ while (1) {
     } else {
         query_word($_);
     }
+    show_prompt();
+}
+
+sub show_prompt {
+    print color 'bold';
+    print 'kamusi> ';
+    print color 'reset';
 }
 
 sub set_property {
