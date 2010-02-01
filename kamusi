@@ -162,18 +162,7 @@ sub display_entry {
 }
 
 BEGIN {
-    # only the most common types are stored!
-    my %buffer = (
-        "noun" => [],
-        "verb" => [],
-        "adjective" => [],
-        "adverb" => [],
-        "conjunction" => [],
-        "interjection" => [],
-        "pronoun" => [],
-        "preposition" => [],
-        "phrase" => [],
-    );
+    my %buffer = ();
     sub squash_result {
         my $entry = shift;
         push(@{$buffer{$$entry{"part_of_speech"}}},
@@ -182,7 +171,6 @@ BEGIN {
     }
     sub display_squash_results {
         for my $type (keys %buffer) {
-            next if $#{$buffer{$type}} == -1;
             print $type . ': ' . join('; ', @{$buffer{$type}}) . "\n";
         }
         %buffer = ();
