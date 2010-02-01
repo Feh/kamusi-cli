@@ -11,19 +11,39 @@ use strict;
 use warnings;
 use DBI;
 use Term::ANSIColor;
+use Getopt::Std;
 
 my $dbargs = {AutoCommit => 0, PrintError => 1};
 my $dbh = DBI->connect("dbi:SQLite:dbname=words.db", "", "", $dbargs);
 
-my $direction = "en"; # sw
-#$direction = "sw";
+my $direction = "en";
 my %property = (
     "direction" , "en",
     "type" , "",
     "verbose" , 0,
-    "examples" , 1
+    "examples" , 1,
+    "squash", 0
 );
 
+my %opts = ();
+getopts('vEsqt:d:', \%opts);
+
+# search direction [default sw->en; no sanity check]
+set_property("direction", $opts{"d"}) if $opts{"d"};
+set_property("type", $opts{"t"}) if $opts{"t"};
+set_property("verbose", 1) if $opts{"v"};
+set_property("examples", 0) if $opts{"E"}; # no examples
+set_property("squash", 1) if $opts{"s"};
+
+if($opts{"q"}) {
+    print STDERR "invoked query/batch mode\n";
+    unless($ARGV[0]) {
+        print STDERR "no word given on command line; exiting.";
+        exit 1;
+    }
+    query_word($ARGV[0]);
+    goto QUIT;
+}
 
 # Optionen im Programm setzen:
 # set exact/search_desc/display_short
@@ -146,6 +166,6 @@ sub display_entry {
 }
 
 QUIT:
-print "kamusi exiting...\n";
+print STDERR "kamusi exiting...\n" unless $opts{"q"};
 $dbh->disconnect();
 # vim:set nowrap et ts=4:
