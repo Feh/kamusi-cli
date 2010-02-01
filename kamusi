@@ -34,7 +34,7 @@ while ($_ = <STDIN>) {
     goto QUIT if /^\.q$/i;
     next if /^\s*$/;
     if ($_ =~ /^\./) {
-        set_property($_);
+        set_property_from_command($_);
     } else {
         query_word($_);
     }
@@ -48,35 +48,39 @@ sub show_prompt {
 }
 
 sub set_property {
+    (my $prop, my $val) = @_;
+    $property{$prop} = $val;
+}
+sub set_property_from_command {
     (my $prop, my $arg) = split / /;
     SWITCH: {
         $prop =~ /.en/ && do {
-            $property{"direction"} = "en";
+            set_property("direction", "en");
             print "now searching en -> sw.\n";
             last;
         };
         $prop =~ /.sw/ && do {
-            $property{"direction"} = "sw";
+            set_property("direction", "sw");
             print "now searching sw -> en.\n";
             last;
         };
         $prop =~ /.v/ && do {
-            $property{"verbose"} = !$property{"verbose"};
+            set_property("verbose", !$property{"verbose"});
             print "verbose output turned " . ($property{"verbose"}?"on":"off") . ".\n";
             last;
         };
         $prop =~ /.ex/ && do {
-            $property{"examples"} = !$property{"examples"};
+            set_property("examples", !$property{"examples"});
             print "example output turned " . ($property{"examples"}?"on":"off") . ".\n";
             last;
         };
         $prop =~ /.t/ && do {
             if (!defined ($arg)) {
-                $property{"type"} = "";
+                set_property("type", "");
                 print "will display results of all types.\n";
             } else {
                 $arg =~ s/^(\w+).*$/$1/;
-                $property{"type"} = $arg;
+                set_property("type", $arg);
                 print "will only display results of type '$arg'.\n";
             }
             last;
