@@ -94,6 +94,11 @@ sub set_property_from_command {
             print "example output turned " . ($property{"examples"}?"on":"off") . ".\n";
             last;
         };
+        $prop =~ /.sq/ && do {
+            set_property("squash", !$property{"squash"});
+            print "squashing turned " . ($property{"squash"}?"on":"off") . ".\n";
+            last;
+        };
         $prop =~ /.t/ && do {
             if (!defined ($arg)) {
                 set_property("type", "");
