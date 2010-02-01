@@ -1,5 +1,6 @@
 #!/usr/bin/perl
-# (c) Julius Plenz
+# (c) 2010 Julius Plenz
+# This software is licensed under the GPL.
 
 use strict;
 use warnings;
