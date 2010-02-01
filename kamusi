@@ -85,6 +85,10 @@ sub query_word {
 
     $table = "english" if $property{"direction"} =~ /en/;
     $table = "swahili" if $property{"direction"} =~ /sw/;
+    unless($table) {
+        print "Cannot understand search direction; assuming default!\n";
+        $table = "english";
+    }
     my $type_query = "";
     if(defined($property{"type"}) && $property{"type"} !~ /^$/) {
         $type_query = "AND part_of_speech LIKE '$property{type}'";
