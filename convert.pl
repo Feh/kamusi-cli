@@ -30,7 +30,8 @@ my %field_dbname = reverse %field;
 my $valid_field_rx = join '|' => values %field;
 
 my %lang_file = (
-    english => 'ealla.txt', # TODO eall.txt, swahili => sall.txt
+    english => 'eall.txt',
+    swahili => 'sall.txt',
 );
 
 my %dbargs = (
@@ -84,10 +85,11 @@ foreach my $lang ( keys %lang_file ) {
             $reading++;
         }
         elsif ( $reading ) { # record finished
-            use Data::Dumper;
-            $insert_stmt{$lang}->execute( map {
-                exists $record{$_} ? $record{$_} : ''
-            } @field{@fields} );
+
+            my $rv = $insert_stmt{$lang}->execute( @record{@field{@fields}} );
+            die 'FAIL!' unless $rv == 1;
+            $insert_stmt{$lang}->finish;
+
             %record     = ();
             $reading    = undef;
         }
