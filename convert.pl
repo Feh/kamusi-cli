@@ -5,6 +5,26 @@ use strict;
 use warnings;
 use DBI;
 
+my %fields = (
+    class               => 'Class',
+    derived_language    => 'Derived Language',
+    derived_word        => 'Derived Word',
+    dialect             => 'Dialect',
+    english_definition  => 'English Definition',
+    english_example     => 'English Example',
+    english_plural      => 'English Plural',
+    english_word        => 'English Word',
+    note                => 'Note',
+    part_of_speech      => 'Part of Speech',
+    related_words       => 'Related Words',
+    swahili_definition  => 'Swahili Definition',
+    swahili_example     => 'Swahili Example',
+    swahili_plural      => 'Swahili Plural',
+    swahili_word        => 'Swahili Word',
+    taxonomy            => 'Taxonomy',
+    terminology         => 'Terminology',
+);
+
 my $dbargs = {AutoCommit => 0, PrintError => 1};
 my $dbh = DBI->connect("dbi:SQLite:dbname=words.db", "", "", $dbargs);
 
