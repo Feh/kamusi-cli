@@ -36,7 +36,7 @@ my %lang_file = (
 
 my %dbargs = (
     AutoCommit  => 0,
-    PrintError  => 1,
+    PrintError  => 0,
 );
 
 # connect to the database
