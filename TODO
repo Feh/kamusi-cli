@@ -6,6 +6,7 @@ TODO: bugfixes
 TODO: improvements
 ==================
 
+* use Term::Shell for the cli part
 * Make location of `words.db' configurable and provide default paths to try:
   ./words.db, ~/.kamusi/words.db, /usr/share/kamusi/words.db
 
