@@ -34,20 +34,14 @@ my $dbh = DBI->connect("dbi:SQLite:dbname=words.db", "", "", $dbargs);
 
 # recreate the tables from scratch
 # might throw an error message if the db has not existed in the first place.
-$dbh->do("drop table english");
-$dbh->do("drop table kiswahili");
-
-$dbh->do("CREATE TABLE english (class TEXT, derived_language TEXT, derived_word TEXT,
-dialect TEXT, english_definition TEXT, english_example TEXT, english_plural TEXT,
-english_word TEXT, note TEXT, part_of_speech TEXT, related_words TEXT,
-swahili_definition TEXT, swahili_example TEXT, swahili_plural TEXT, swahili_word TEXT,
-taxonomy TEXT, terminology TEXT);");
-$dbh->do("CREATE TABLE swahili (class TEXT, derived_language TEXT, derived_word TEXT,
-dialect TEXT, english_definition TEXT, english_example TEXT, english_plural TEXT,
-english_word TEXT, note TEXT, part_of_speech TEXT, related_words TEXT,
-swahili_definition TEXT, swahili_example TEXT, swahili_plural TEXT, swahili_word TEXT,
-taxonomy TEXT, terminology TEXT);");
-
+foreach my $lang (qw( english swahili )) {
+    $dbh->do("DROP TABLE $lang");
+    $dbh->do(
+        "CREATE TABLE $lang ("
+            . join( ', ' => map "$_ TEXT" => keys %fields )
+            . ');'
+    );
+}
 
 open(EN, "eall.txt");
 my %entry;
