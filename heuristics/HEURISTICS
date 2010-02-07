@@ -3,37 +3,20 @@ HEURISTICS
 
 How to determine whether a word is english or swahili?
 Try to use some well-educated guesses to find out.
-
-There are two certain cases:
-
-* Word begins with a dash -> verb root -> swahili
-* Word contains ng' -> swahili
-* word contains q or x -> english word
+[Does it consume too much resources to look up the word in the db and
+make a guess based on the number of results returned?]
 
 All the other cases must somehow be classified (using some
 deterministic scores for certain properties the word has) in order to
 make a guess which language it is from.
 
-English
-=======
+With current rules from guess_language.pl the detection rates are as
+follows (found = detected correctly, fail = no decision, fp = false
+positive):
 
-* double consonants [allah?!]
+English           Swahili
+=======           =======
 
-Swahili
-=======
-
-* often: ^(-consonant{1,2}-vowel{1,2})+$
-
-Actually, a pretty good test score seems to be to check for a vowel at the end:
-
-zsh> wc -l swahili_words.txt
-22411 swahili_words.txt
-zsh> grep -ve '[aeiou]$' swahili_words.txt | wc -l
-346
-
-So only 1.5% of the words fail this test, and these are partly words
-ending in punctuation, or directly from arabic.
-
-Also, mw in a word is a pretty secure indicator that a word is
-swahili. (Only six or so english words fail, and they are
-unimportant).
+found: 28956      found: 18145
+fail: 1838        fail: 3953
+fp: 168           fp: 313

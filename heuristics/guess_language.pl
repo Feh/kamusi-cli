@@ -64,7 +64,8 @@ foreach my $l (keys %crit) {
                 $stat{$l}{fp}++;
             } else {
                 $stat{$l}{fail}++;
-                print $_ ." en:$score{en} vs sw:$score{sw}\n";
+                # still have to work on these!
+                # print $_ ." en:$score{en} vs sw:$score{sw}\n";
             }
         }
     }
