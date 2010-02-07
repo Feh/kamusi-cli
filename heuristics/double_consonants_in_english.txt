@@ -1,0 +1,78 @@
+zsh> for c ({a-z}) print -n $c: && grep -c ${c}$c english_words.txt
+a:20
+b:112
+c:219
+d:199
+e:1502
+f:563
+g:136
+h:6
+i:4
+j:0
+k:2
+l:2052
+m:245
+n:296
+o:1301
+p:503
+q:0
+r:622
+s:1796
+t:704
+u:8
+v:0
+w:2
+x:0
+y:0
+z:39
+
+with a versus to swahili words:
+
+zsh> for c ({a-z}) print -n $c:' ' && grep -c ${c}$c english_words.txt && print -n ' vs ' && grep -c ${c}$c swahili_words.txt
+a: 20
+ vs 533
+b: 112
+ vs 1
+c: 219
+ vs 0
+d: 199
+ vs 2
+e: 1502
+ vs 55
+f: 563
+ vs 2
+g: 136
+ vs 4
+h: 6
+ vs 1
+i: 4
+ vs 101
+j: 0
+k: 2
+ vs 1
+l: 2052
+ vs 24
+m: 245
+ vs 52
+n: 296
+ vs 12
+o: 1301
+ vs 149
+p: 503
+ vs 2
+q: 0
+r: 622
+ vs 2
+s: 1796
+ vs 8
+t: 704
+ vs 1
+u: 8
+ vs 269
+v: 0
+w: 2
+ vs 0
+x: 0
+y: 0
+z: 39
+ vs 0

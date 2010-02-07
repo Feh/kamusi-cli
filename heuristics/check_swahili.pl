@@ -1,25 +1,62 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use Data::Dumper;
 
-my $score = 50; # for later use
+my %score = ( en => 0, sw => 0 );
 my $w = shift;
 
-my $count = 0;
+die 'no word!' unless $w;
 
-my @c = ( 'b', 'ch', 'd', 'dh', 'f', 'g', 'gh', 'h', 'j',
-    'k', 'kh', 'l', 'm[twm]?', 'n', 'n[zdyg]?', 'p', 'r', 's', 'st', 'sh',
-    't', 'th', 'v', 'w', 'y', 'z',);
-my @v = ( 'a', 'e', 'i', 'o', 'u' );
+my %crit = (
+    en => {
+        doubleconsonant => {
+            regex =>join ('|' => map { $_ x 2 } split '' => 'abcdefglmnoprstz'),
+            score => 15
+        },
+        ending => {
+            regex => '(.tion|.y|.bl[ey]|nt|ze)$',
+            score => 20
+        },
+        unique => {
+            regex => '(ck|q|x)',
+            score => 30
+        }
+    },
 
-my $c_test = "(". join('|' => @c) . ")";
-my $v_test = "(". join('|' => @v) . ")";
+    sw => {
+        unique => {
+            regex => "(mw|ng')",
+            score => 30
+        },
+        dgh => {
+            regex => 'dh|gh',
+            score => 10
+        },
+        ana => {
+            regex => 'ana$',
+            score => 15
+        },
+        verbroot => {
+            regex => '^-',
+            score => 100
+        },
+        beginning => {
+            regex => '^(n[dy]|m[ztdkw])',
+            score => 30
+        },
+        ending => {
+            regex => '[aeiou]$',
+            score => 5
+        }
+    }
+);
 
-open my $f, '<', 'swahili_words.txt' or die 'cant open file';
-while (<$f>) {
-    chomp;
-    $count++ if /^-?$v_test?($c_test$v_test{1,2})+(\s+.*)?$/;
+foreach my $lang (keys %crit) {
+    foreach my $c (keys %{$crit{$lang}}) {
+        $score{$lang} += $crit{$lang}{$c}{score}
+            if $w =~ /$crit{$lang}{$c}{regex}/;
+    }
 }
-    print "^-?$v_test?($c_test${v_test}{1,3})+(\\s+.*)?\$\n";
 
-print $count . " words matched the expr!\n";
+print Dumper %score;
