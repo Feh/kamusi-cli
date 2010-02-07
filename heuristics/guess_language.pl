@@ -18,19 +18,24 @@ my %crit = (
         ending          => { score => 20, regex => '(ed|tion|y|bl[ey]|nt|sh|ze|ing)($|\s)' },
         ending_in_two_consonants => { score => 25, regex => '[^aeiou]{2}$' },
         ch_no_vowel     => { score => 10, regex => 'ch[^aeiouw]' },
-        unique          => { score => 30, regex => '(ck|q|x|wh|fl)' },
+        unique          => { score => 30, regex => '(c[^h]|q|x|wh|fl)' },
         kind_of         => { score => 20, regex => 'kind' },
         ie              => { score => 5, regex => 'ie' },
+        th              => { score => 5, regex => '^th' },
     },
 
     sw => {
         unique      => { score => 30, regex => "(mw|ng')" },
         dgh         => { score => 10, regex => '(dh|gh)[aeiou]' },
         kiuw        => { score => 5, regex => 'k[uiw]' },
+        ki_begin    => { score => 15, regex => '^ki' },
         ana         => { score => 15, regex => 'ana$' },
         verbroot    => { score => 100, regex => '^-' },
         beginning   => { score => 30, regex => '^(n[dygjc]|m([bdfghjklmnprstvwz]|ch))' },
         i_end       => { score => 25, regex => 'i$' },
+        ji          => { score => 10, regex => 'ji' },
+        double_u_a  => { score => 30, regex => 'aa|uu' },
+        middle_of   => { score => 50, regex => '\s[wylz]a\s' },
     }
 );
 
@@ -53,8 +58,8 @@ foreach my $l (keys %crit) {
                 $stat{$l}{fail}++;
             } else {
                 $stat{$l}{fp}++;
+                print $_ ." en:$score{en} vs sw:$score{sw}\n";
             }
-            #print $_ ." $score{$l} vs $score{sw}\n" if $l == "en";
             # print Dumper %score;
         }
     }
