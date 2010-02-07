@@ -48,12 +48,6 @@ sub _set_dir {
         $lang eq 'en' ? 'en -> sw' : 'sw -> en';
 }
 
-sub smry__en { 'switch the search language en -> sw (default)' }
-sub smry__sw { 'switch the search language sw -> en' }
-
-sub help__en { smry__en() . "\n" }
-sub help__sw { smry__sw() . "\n" }
-
 # toggle verbose, squash, examples
 
 sub run__v  { _toggle('verbose') }
@@ -69,16 +63,6 @@ sub _toggle {
         $thing, $setting{$thing} ? 'on' : 'off';
 }
 
-sub _smry_toggle { 'toggle ' . shift }
-
-sub smry__v     { _smry_toggle('verbose') }
-sub smry__sq    { _smry_toggle('squash') }
-sub smry__ex    { _smry_toggle('examples') }
-
-sub help__v     { smry__v() . "\n" }
-sub help__sq    { smry__sq() . "\n" }
-sub help__ex    { smry__ex() . "\n" }
-
 # set dem type
 
 sub run__t {
@@ -93,9 +77,6 @@ sub run__t {
         print "will display results of all types.\n";
     }
 }
-
-sub smry__t { 'display only results of a specified type.' }
-sub help__t { "'_t TYPE': display only results of the type TYPE.\n" }
 
 # wildcard: translate that shit!
 
