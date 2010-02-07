@@ -16,7 +16,8 @@ my %crit = (
     en => {
         doubleconsonant => { score => 15, regex => join ('|' => map { $_ x 2 } split '' => 'abcdefglmnoprstz') },
         ending          => { score => 20, regex => '(ed|tion|y|bl[ey]|nt|sh|ze|ing)($|\s)' },
-        ending_in_two_consonants => { score => 25, regex => '[^aeiou]{2}$' },
+        ending_with_consonant    => { score => 5, regex => '[^aeiou!]$' },
+        ending_in_two_consonants => { score => 20, regex => '[^aeiou!]{2}($|\s)' }, # don't catch exclamations
         ch_no_vowel     => { score => 10, regex => 'ch[^aeiouw]' },
         unique          => { score => 30, regex => '(c[^h]|q|x|wh|fl)' },
         kind_of         => { score => 20, regex => 'kind' },
@@ -36,6 +37,8 @@ my %crit = (
         ji          => { score => 10, regex => 'ji' },
         double_u_a  => { score => 30, regex => 'aa|uu' },
         middle_of   => { score => 50, regex => '\s[wylz]a\s' },
+        concept     => { score => 5,  regex => '^u.+[aeiou]$' },
+        repeated_syllable => { score => 5, regex => '([^aeiou]{1,2}[aeiou]{1,2})\1' },
     }
 );
 
@@ -47,7 +50,7 @@ foreach my $l (keys %crit) {
             $score{$lang} = 0;
             foreach my $c (keys %{$crit{$lang}}) {
                 $score{$lang} += $crit{$lang}{$c}{score}
-                    if /$crit{$lang}{$c}{regex}/;
+                    if /$crit{$lang}{$c}{regex}/i;
             }
         }
         if($score{$l} != 0) {
