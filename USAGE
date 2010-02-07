@@ -9,7 +9,7 @@ When you simply enter a word, kamusi will output all matching words in
 the currently selected language together with their meaning and
 further descriptions.
 
-There are some simple commands, all of them beginning with a dot (.),
+There are some simple commands, all of them beginning with an underscore (_),
 to control kamusi's behaviour. You can also set these parameters
 beforehand, via command line options. (Multiple options can be
 combined, thus `kamusi -svd sw' will toggle [turn on] squashing,
@@ -17,15 +17,15 @@ verbose mode and switch the direction to sw->en.)
 
 Switch  Command       Meaning
 ======  =======       =======
--d en   .en           swith the search language en->sw [this is the startup default]
--d sw   .sw           swith the search language sw->en
--v      .v            toggle verbose output [default: off]
--t VAL  .t [TYPE]     display only results of type TYPE, where TYPE is on of [1]
+-d en   _en           swith the search language en->sw [this is the startup default]
+-d sw   _sw           swith the search language sw->en
+-v      _v            toggle verbose output [default: off]
+-t VAL  _t [TYPE]     display only results of type TYPE, where TYPE is on of [1]
                       ommitting TYPE is equal to allowing all types be displayed.
--s      .sq           Toggle squashing [for each type of word, all matches will
+-s      _sq           Toggle squashing [for each type of word, all matches will
                       be displayed in on long line, separated by a ';'. default: off]
--E      .ex           toggle the display of examples if provided [default: on]
-        .q            quit kamusi; you can also achieve this with Ctrl-C or Ctrl-D
+-E      _ex           toggle the display of examples if provided [default: on]
+        _q            quit kamusi; you can also achieve this with Ctrl-C or Ctrl-D
 
 Wildcards and Verb Prefixes
 ===========================
@@ -34,26 +34,19 @@ As of now, use the standard SQL wild cards (% for arbitrary match). Note that
 most verbs are in fact available with a leading hyphen only, so searching for
 the meaning of "nililia", you should precede the verb root with a hyphen: -lia.
 
-Batch/Query mode
-================
-
-You might want to invoke this script non-interactively[2]. To switch to
-query mode, where kamusi will just print out the results for the first
-word given on the command line, just add the -q switch to the call.
-
 Example Run
 ===========
 
 Let's take an example: you occasionally hear people shouting something along
 the lines of "nia".
 
-    kamusi> .sw
+    kamusi> _sw
     now searching sw -> en.
-    kamusi> .ex
-    example output turned off.
+    kamusi> _ex
+    examples turned off
     kamusi> %nia
         [ .. lots of output ... ]
-    kamusi> .t phrase
+    kamusi> _t phrase
     will only display results of type 'phrase'.
     kamusi> %nia
     phrase: nia = {{ it is clear }}
@@ -62,12 +55,20 @@ the lines of "nia".
 
 So there, you found it! :-)
 
+Batch/Query mode
+================
+
+You might want to invoke this script non-interactively[2]. That's no problem,
+just type your lookup string after the command line options like this:
+
+    $ perl kamusi -sd sw -t verb %nia
+
 [1] the most common types are: adjective, adverb, noun, verb; to
     obtain a full list of types available, issue the following command:
     $ grep Part\ of sall.txt | cut -d' ' -f4 | sort | uniq -c | sort -bgr
 [2] An example use case is if you bind a small shell script to a
     specific key combination in your window manager. You might use a
-    command like `xclip -o | xargs ~/bin/kamusi -qs | notify-send' to
+    command like `xclip -o | xargs ~/bin/kamusi -s | notify-send' to
     open a little popup dialog for a few seconds, displaying all the
     possible meanings of the word you just selected in your web
     browser.
