@@ -8,19 +8,26 @@ use DBI;
 use Term::ANSIColor;
 use Getopt::Std;
 
-my $dbargs = {AutoCommit => 0, PrintError => 1};
-my $dbh = DBI->connect("dbi:SQLite:dbname=words.db", "", "", $dbargs);
+my %dbargs = (
+    AutoCommit  => 0,
+    PrintError  => 1,
+);
 
-my $direction = "en";
+my $dbh = DBI->connect(
+    'dbi:SQLite:dbname=words.db',
+    '', '', \%dbargs
+);
+
 my %property = (
-    "direction" , "en",
-    "type" , "",
-    "verbose" , 0,
-    "examples" , 1,
-    "squash", 0
+    direction   => 'en',
+    type        => '',
+    verbose     => 0,
+    examples    => 1,
+    squash      => 0,
 );
 
 my %opts = ();
+
 getopts('vEsqt:d:', \%opts);
 
 # search direction [default sw->en; no sanity check]
