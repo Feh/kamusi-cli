@@ -49,18 +49,20 @@ foreach my $l (keys %crit) {
                 $score{$lang} += $crit{$lang}{$c}{score}
                     if /$crit{$lang}{$c}{regex}/;
             }
-            #print max(values %score) . "\n\n";
         }
-        if($score{$l} != 0 && $score{$l} == max(values %score)) {
-            $stat{$l}{found}++;
-        } else {
-            if($score{$l} == 0) {
-                $stat{$l}{fail}++;
+        if($score{$l} != 0) {
+            if ($score{$l} == max(values %score)) {
+                $stat{$l}{found}++;
             } else {
                 $stat{$l}{fp}++;
+            }
+        } else {
+            if(max(values %score) > 0) {
+                $stat{$l}{fp}++;
+            } else {
+                $stat{$l}{fail}++;
                 print $_ ." en:$score{en} vs sw:$score{sw}\n";
             }
-            # print Dumper %score;
         }
     }
 }
