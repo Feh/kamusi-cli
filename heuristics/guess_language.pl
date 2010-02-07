@@ -28,7 +28,7 @@ my %crit = (
         unique      => { score => 30, regex => "(mw|ng')" },
         dgh         => { score => 10, regex => '(dh|gh)[aeiou]' },
         kiuw        => { score => 5, regex => 'k[uiw]' },
-        ki_begin    => { score => 15, regex => '^ki' },
+        ki_begin    => { score => 15, regex => '(^|\s)ki' },
         ana         => { score => 15, regex => 'ana$' },
         verbroot    => { score => 100, regex => '^-' },
         beginning   => { score => 30, regex => '^(n[dygjc]|m([bdfghjklmnprstvwz]|ch))' },
