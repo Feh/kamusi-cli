@@ -1,0 +1,14 @@
+HEURISTICS
+==========
+
+How to determine whether a word is english or swahili?
+Try to use some well-educated guesses to find out.
+
+There are two certain cases:
+
+* Word begins with a dash -> verb root -> swahili
+* word contains q or x -> english word
+
+All the other cases must somehow be classified (using some
+deterministic scores for certain properties the word has) in order to
+make a guess which language it is from.
