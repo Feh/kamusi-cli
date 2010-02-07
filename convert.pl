@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# (c) Julius Plenz
+# (c) Julius Plenz, Mirko Westermeier
 
 use strict;
 use warnings;
