@@ -14,69 +14,23 @@ my %stat = (
 
 my %crit = (
     en => {
-        doubleconsonant => {
-            regex => join ('|' => map { $_ x 2 } split '' => 'abcdefglmnoprstz'),
-            score => 15
-        },
-        ending => {
-            regex => '(ed|tion|y|bl[ey]|nt|sh|ze|ing)($|\s)',
-            score => 20
-        },
-        ending_in_two_consonants => {
-            regex => '[^aeiou]{2}$',
-            score => 25
-        },
-        ch_no_vowel => {
-            regex => 'ch[^aeiouw]',
-            score => 10
-        },
-        unique => {
-            regex => '(ck|q|x|wh|fl)',
-            score => 30
-        },
-        kind_of => {
-            regex => 'kind',
-            score => 20
-        },
-        ie => {
-            regex => 'ie',
-            score => 5
-        },
+        doubleconsonant => { score => 15, regex => join ('|' => map { $_ x 2 } split '' => 'abcdefglmnoprstz') },
+        ending          => { score => 20, regex => '(ed|tion|y|bl[ey]|nt|sh|ze|ing)($|\s)' },
+        ending_in_two_consonants => { score => 25, regex => '[^aeiou]{2}$' },
+        ch_no_vowel     => { score => 10, regex => 'ch[^aeiouw]' },
+        unique          => { score => 30, regex => '(ck|q|x|wh|fl)' },
+        kind_of         => { score => 20, regex => 'kind' },
+        ie              => { score => 5, regex => 'ie' },
     },
 
     sw => {
-        unique => {
-            regex => "(mw|ng')",
-            score => 30
-        },
-        dgh => {
-            regex => '(dh|gh)[aeiou]',
-            score => 10
-        },
-        kiuw => {
-            regex => 'k[uiw]',
-            score => 5
-        },
-        ana => {
-            regex => 'ana$',
-            score => 15
-        },
-        verbroot => {
-            regex => '^-',
-            score => 100
-        },
-        beginning => {
-            regex => '^(n[dygjc]|m([bdfghjklmnprstvwz]|ch))',
-            score => 30
-        },
-        i_end => {
-            regex => 'i$',
-            score => 25
-        },
-        # ending => {
-        #     regex => '[aeou]$',
-        #     score => 5
-        # },
+        unique      => { score => 30, regex => "(mw|ng')" },
+        dgh         => { score => 10, regex => '(dh|gh)[aeiou]' },
+        kiuw        => { score => 5, regex => 'k[uiw]' },
+        ana         => { score => 15, regex => 'ana$' },
+        verbroot    => { score => 100, regex => '^-' },
+        beginning   => { score => 30, regex => '^(n[dygjc]|m([bdfghjklmnprstvwz]|ch))' },
+        i_end       => { score => 25, regex => 'i$' },
     }
 );
 
