@@ -1,8 +1,3 @@
-TODO: bugfixes
-==============
-
-* catch control sequences (for example ^D)
-
 TODO: improvements
 ==================
 
@@ -12,10 +7,9 @@ TODO: improvements
 TODO: plans
 ===========
 
-* integrate libreadline support
-* add vi mode
-* improve wildcard support [rewrite completely]
-* maybe implement something pager-like (or mutt-like) when there are many results
-* group resulting words together
+* improve wildcard support (* instead of %)
 * do some heuristics on which words are more important in result
+* maybe implement something pager-like (or mutt-like) when there are many results
+  [possibible via internal or external pager in Term::Shell->page()]
+* add vi mode
 * allow to create "standalone" version by somehow encoding the sqlite db within the program file
