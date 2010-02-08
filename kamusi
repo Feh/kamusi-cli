@@ -17,10 +17,24 @@ my %setting = (
     examples    => 1,
 );
 
+# get command line options
+
+my %opt = ();
+getopts 'vEsqt:d:D:', \%opt;
+
+$setting{direction} = $opt{d}   if $opt{d} and $opt{d} =~ /^(en|sw)$/;
+$setting{type}      = $opt{t}   if $opt{t};
+$setting{verbose}   = $opt{v}   if $opt{v};
+$setting{squash}    = $opt{s}   if $opt{s};
+$setting{examples}  = 0         if $opt{E};
+
+# set up db connection
+
 my @dbfiles = grep { -e $_ } ("./words.db",
     "$ENV{HOME}/.kamusi/words.db",
     "/usr/share/kamusi/words.db",
     "/usr/local/share/kamusi/words.db" );
+@dbfiles = ( $opt{D} ) if $opt{D};
 
 my $dbh;
 foreach(@dbfiles) {
@@ -196,17 +210,6 @@ sub display {
 ################################################################################
 
 package main;
-
-# get command line options
-
-my %opt = ();
-getopts 'vEsqt:d:', \%opt;
-
-$setting{direction} = $opt{d}   if $opt{d} and $opt{d} =~ /^(en|sw)$/;
-$setting{type}      = $opt{t}   if $opt{t};
-$setting{verbose}   = $opt{v}   if $opt{v};
-$setting{squash}    = $opt{s}   if $opt{s};
-$setting{examples}  = 0         if $opt{E};
 
 # got args? no? then wait as a shell
 

@@ -1,9 +1,3 @@
-TODO: improvements
-==================
-
-* Make location of `words.db' configurable and provide default paths to try:
-  ./words.db, ~/.kamusi/words.db, /usr/share/kamusi/words.db
-
 TODO: plans
 ===========
 
