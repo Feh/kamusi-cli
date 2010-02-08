@@ -17,13 +17,24 @@ my %setting = (
     examples    => 1,
 );
 
-my $dbh = DBI->connect(
-    'dbi:SQLite:dbname=words.db',
-    '', '', {
-        AutoCommit  => 0,
-        PrintError  => 1,
-    }
-);
+my @dbfiles = grep { -e $_ } ("./words.db",
+    "$ENV{HOME}/.kamusi/words.db",
+    "/usr/share/kamusi/words.db",
+    "/usr/local/share/kamusi/words.db" );
+
+my $dbh;
+foreach(@dbfiles) {
+    $dbh = DBI->connect(
+        'dbi:SQLite:dbname='.$_,
+        '', '', {
+            AutoCommit  => 0,
+            PrintError  => 1,
+        }
+    );
+    last if $dbh;
+}
+
+die "no database!" unless $dbh;
 
 ################################################################################
 # shell commands
