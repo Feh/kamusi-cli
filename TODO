@@ -1,19 +1,9 @@
-TODO: bugfixes
-==============
-
-* catch control sequences (for example ^D)
-
-TODO: improvements
-==================
-
-* Make location of `words.db' configurable and provide default paths to try:
-  ./words.db, ~/.kamusi/words.db, /usr/share/kamusi/words.db
-
 TODO: plans
 ===========
 
-* integrate libreadline support
-* add vi mode
-* improve wildcard support [rewrite completely]
+* improve wildcard support (* instead of %)
+* do some heuristics on which words are more important in result
 * maybe implement something pager-like (or mutt-like) when there are many results
-* group resulting words together
+  [possibible via internal or external pager in Term::Shell->page()]
+* add vi mode
+* allow to create "standalone" version by somehow encoding the sqlite db within the program file

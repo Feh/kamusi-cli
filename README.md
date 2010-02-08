@@ -40,14 +40,10 @@ will be very fast indeed.)
 Using kamusi
 ============
 
-Simply invoke the kamusi program with ./kamusi. Preferably, install
-the `rlwrap' package, which sort of adds readline support on top of
-the program, so that you can use ^U and the like. My call to kamusi
-looks like this:
+Simply invoke the kamusi program with ./kamusi. If you decide to move
+the kamusi script to $HOME/bin, either place the `words.db' file in
+$HOME/.kamusi or pass the call the -D option, i.e.:
 
-    $ rlwrap perl kamusi
-
-Be warned that kamusi expects to find `words.db' in CWD (though this
-is likely to change and to be made configurable in the future).
+    $ kamusi -D /path/to/words.db
 
 For further usage information, refer to the USAGE file.

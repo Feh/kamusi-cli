@@ -36,7 +36,7 @@ my %lang_file = (
 
 my %dbargs = (
     AutoCommit  => 0,
-    PrintError  => 1,
+    PrintError  => 0,
 );
 
 # connect to the database
@@ -88,7 +88,6 @@ foreach my $lang ( keys %lang_file ) {
 
             my $rv = $insert_stmt{$lang}->execute( @record{@field{@fields}} );
             die 'FAIL!' unless $rv == 1;
-            $insert_stmt{$lang}->finish;
 
             %record     = ();
             $reading    = undef;
@@ -98,8 +97,11 @@ foreach my $lang ( keys %lang_file ) {
         }
     }
 
+    $insert_stmt{$lang} = undef; # prevent warnings about still-active sths
     close $filehandle;
 }
+
+print "Successfully imported all data from language files!\n";
 
 $dbh->commit();
 $dbh->disconnect();
