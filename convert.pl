@@ -4,6 +4,7 @@
 use strict;
 use warnings;
 use DBI;
+use SQL::Abstract;
 
 my %field = (
     class               => 'Class',
@@ -34,40 +35,21 @@ my %lang_file = (
     swahili => 'sall.txt',
 );
 
-my %dbargs = (
-    AutoCommit  => 0,
-    PrintError  => 0,
-);
-
 # connect to the database
 my $dbh = DBI->connect(
     'dbi:SQLite:dbname=words.db',
-    '', '', \%dbargs
+    '', '', {
+        AutoCommit  => 0,
+        PrintError  => 0,
+    },
 );
+
+my $sql = new SQL::Abstract; # my$sql OMG!
 
 # preparing the database for the data import
 foreach my $lang ( keys %lang_file ) {
-    $dbh->do("DROP TABLE $lang");
-    $dbh->do(
-        "CREATE TABLE $lang ("
-        . join( ', ' => map "$_ TEXT" => keys %field )
-        . ');'
-    );
-}
-
-my @fields = keys %field;   # a defined ordering of the %field keys
-                            # hashs do not have that, so we use this. Later.
-
-my %insert_stmt;    # prepare the insert statements for each language
-                    # (a placeholder for the table name is not possible)
-foreach my $lang ( keys %lang_file ) {
-    $insert_stmt{$lang} = $dbh->prepare(
-        "INSERT INTO $lang ("
-        . join( ', ' => @fields )
-        . ') VALUES ('
-        . join( ', ' => ('?') x @fields )
-        . ')'
-    );
+    $dbh->do( scalar $sql->generate( 'drop table', \$lang ) );
+    $dbh->do( scalar $sql->generate( 'create table', \$lang, [keys %field] ) );
 }
 
 # import the language data
@@ -86,8 +68,11 @@ foreach my $lang ( keys %lang_file ) {
         }
         elsif ( $reading ) { # record finished
 
-            my $rv = $insert_stmt{$lang}->execute( @record{@field{@fields}} );
-            die 'FAIL!' unless $rv == 1;
+            my ( $stmt, @bind ) = $sql->insert( $lang, { map {
+                $_ => $record{$field{$_}},
+            } grep { $record{$field{$_}} } keys %field } );
+
+            $dbh->do( $stmt, {}, @bind );
 
             %record     = ();
             $reading    = undef;
@@ -97,7 +82,6 @@ foreach my $lang ( keys %lang_file ) {
         }
     }
 
-    $insert_stmt{$lang} = undef; # prevent warnings about still-active sths
     close $filehandle;
 }
 
