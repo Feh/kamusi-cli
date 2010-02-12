@@ -6,6 +6,7 @@ use strict;
 use warnings;
  
 use DBI;
+use SQL::Abstract;
 use Term::Shell;
 use Getopt::Std;
  
@@ -133,21 +134,20 @@ my %dir2lang = (
     en => 'english',
     sw => 'swahili',
 );
- 
-my %query = (
-    map { $_ => $dbh->prepare(sprintf '
-SELECT * FROM %s
-WHERE %s_word LIKE ? AND part_of_speech LIKE ?
-ORDER BY part_of_speech ASC
-', $_, $_) } qw( english swahili ),
-);
+
+my $sql = new SQL::Abstract;
  
 sub _query {
     my $word = shift;
     my $type = $setting{type} || '%';
-    my $query = $query{ $dir2lang{ $setting{direction} } };
-    $query->execute( $word, $type );
-    return @{ $query->fetchall_arrayref({}) }; # list of hashrefs
+    my $lang = $dir2lang{ $setting{direction} };
+
+    my ( $stmt, @bind ) = $sql->select( $lang, '*', {
+            $lang . '_word' => { -like => $word },
+            part_of_speech  => { -like => $type },
+    }, 'part_of_speech' );
+
+    return @{ $dbh->selectall_arrayref( $stmt, { Slice => {} }, @bind ) };
 }
  
 # hardcore displayshun acshun
