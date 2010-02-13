@@ -68,9 +68,11 @@ foreach my $lang ( keys %lang_file ) {
         }
         elsif ( $reading ) { # record finished
 
-            my ( $stmt, @bind ) = $sql->insert( $lang, { map {
-                $_ => $record{$field{$_}},
-            } grep { $record{$field{$_}} } keys %field } );
+            my @fields = grep { defined $record{$field{$_}} } keys %field;
+
+            my %assignments = map { $_ => $record{$field{$_}} } @fields;
+
+            my ( $stmt, @bind ) = $sql->insert( $lang, \%assignments );
 
             $dbh->do( $stmt, {}, @bind );
 
