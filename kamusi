@@ -1,99 +1,100 @@
 #!/usr/bin/perl
 # (c) 2010 Julius Plenz, Mirko Westermeier
 # This software is licensed under the GPL.
-
+ 
 use strict;
 use warnings;
-
+ 
 use DBI;
+use SQL::Abstract;
 use Term::Shell;
 use Getopt::Std;
-
+ 
 my %setting = (
-    direction   => 'en',
-    type        => '',
-    verbose     => 0,
-    squash      => 0,
-    examples    => 1,
+    direction => 'en',
+    type => '',
+    verbose => 0,
+    squash => 0,
+    examples => 1,
 );
-
+ 
 # get command line options
-
+ 
 my %opt = ();
 getopts 'vEsqt:d:D:', \%opt;
-
-$setting{direction} = $opt{d}   if $opt{d} and $opt{d} =~ /^(en|sw)$/;
-$setting{type}      = $opt{t}   if $opt{t};
-$setting{verbose}   = $opt{v}   if $opt{v};
-$setting{squash}    = $opt{s}   if $opt{s};
-$setting{examples}  = 0         if $opt{E};
-
+ 
+$setting{direction} = $opt{d} if $opt{d} and $opt{d} =~ /^(en|sw)$/;
+$setting{type} = $opt{t} if $opt{t};
+$setting{verbose} = $opt{v} if $opt{v};
+$setting{squash} = $opt{s} if $opt{s};
+$setting{examples} = 0 if $opt{E};
+ 
 # set up db connection
-
+ 
 my @dbfiles = grep { -e $_ } ("./words.db",
     "$ENV{HOME}/.kamusi/words.db",
     "/usr/share/kamusi/words.db",
     "/usr/local/share/kamusi/words.db" );
 @dbfiles = ( $opt{D} ) if $opt{D};
-
+ 
 my $dbh;
 foreach(@dbfiles) {
     $dbh = DBI->connect(
         'dbi:SQLite:dbname='.$_,
         '', '', {
-            AutoCommit  => 0,
-            PrintError  => 1,
+            AutoCommit => 0,
+            PrintError => 1,
         }
     );
     last if $dbh;
 }
-
+ 
 die "no database!" unless $dbh;
-
+ 
 ################################################################################
 # shell commands
 ################################################################################
-
+ 
 package shell;
 use base qw( Term::Shell );
-
+ 
 sub prompt_str { 'kamusi> ' }
-
+ 
 # translashun direcshun
-
+ 
 sub run__en { _set_dir('en') }
 sub run__sw { _set_dir('sw') }
-
+ 
 sub _set_dir {
     my $lang = shift;
-
+ 
     $setting{direction} = $lang;
-
+ 
     printf "now searching %s.\n",
         $lang eq 'en' ? 'en -> sw' : 'sw -> en';
 }
-
+ 
 # toggle verbose, squash, examples
-
-sub run__v  { _toggle('verbose') }
+ 
+sub run__v { _toggle('verbose') }
 sub run__sq { _toggle('squash') }
 sub run__ex { _toggle('examples') }
-
+ 
 sub _toggle {
     my $thing = shift;
-
+ 
     $setting{$thing} = ! $setting{$thing};
-
+ 
     printf "%s turned %s\n",
         $thing, $setting{$thing} ? 'on' : 'off';
 }
-
+ 
 # set dem type
-
+ 
 sub run__t {
     my ( $self, $type ) = @_;
     $setting{type} = $type;
-
+ 
     if ( $type ) {
         printf "will only display results of type '%s'.\n",
             $type;
@@ -102,14 +103,14 @@ sub run__t {
         print "will display results of all types.\n";
     }
 }
-
+ 
 # wildcard: translate that shit!
-
+ 
 sub catch_run {
     my ( $self, $word ) = @_;
-
+ 
     my @results = _query($word);
-
+ 
     if ( $setting{squash} ) {
         display_squash(@results);
     }
@@ -117,109 +118,108 @@ sub catch_run {
         display(@results);
     }
 }
-
+ 
 # help and exit
-
+ 
 sub init {
     my $self = shift;
     $self->remove_commands(qw( help exit ));
 }
-
+ 
 sub alias_exit { '_q' }
-
+ 
 # hardcore translashun acshun
-
+ 
 my %dir2lang = (
-    en  => 'english',
-    sw  => 'swahili',
+    en => 'english',
+    sw => 'swahili',
 );
 
-my %query = (
-    map { $_ => $dbh->prepare(sprintf '
-        SELECT * FROM %s
-            WHERE %s_word LIKE ? AND part_of_speech LIKE ?
-            ORDER BY part_of_speech ASC
-    ', $_, $_) } qw( english swahili ),
-);
-
+my $sql = new SQL::Abstract;
+ 
 sub _query {
-    my $word    = shift;
-    my $type    = $setting{type} || '%';
-    my $query   = $query{ $dir2lang{ $setting{direction} } };
-    $query->execute( $word, $type );
-    return @{ $query->fetchall_arrayref({}) }; # list of hashrefs
+    my $word = shift;
+    my $type = $setting{type} || '%';
+    my $lang = $dir2lang{ $setting{direction} };
+
+    my ( $stmt, @bind ) = $sql->select( $lang, '*', {
+            $lang . '_word' => { -like => $word },
+            part_of_speech  => { -like => $type },
+    }, 'part_of_speech' );
+
+    return @{ $dbh->selectall_arrayref( $stmt, { Slice => {} }, @bind ) };
 }
-
+ 
 # hardcore displayshun acshun
-
+ 
 sub display_squash {
     my @entries = @_;
-    my %buffer  = ();
-
+    my %buffer = ();
+ 
     push @{ $buffer{ $_->{part_of_speech} } },
         $setting{direction} eq 'en' ? $_->{swahili_word} : $_->{english_word}
         for @entries;
-
+ 
     printf "%s: %s\n",
         $_, join '; ' => @{ $buffer{$_} }
         for sort keys %buffer;
 }
-
+ 
 sub display {
     my @entries = @_;
-    my %s       = %setting;
-
+    my %s = %setting;
+ 
     foreach my $e ( @entries ) {
-
+ 
         printf "%s: %s = {{ %s }}\n",
             map $e->{$_} => qw( part_of_speech swahili_word english_word );
-
-        printf "Pl. %-34s  Pl. %-34s\n",
+ 
+        printf "Pl. %-34s Pl. %-34s\n",
             $e->{swahili_plural}, $e->{english_plural}
             if $s{verbose} and $e->{swahili_plural} and $e->{english_plural};
-
+ 
         printf ' ' x 4 . "| Example: %s\n",
             $e->{english_example}
             if $s{examples} and $e->{english_example};
-
+ 
         printf ' ' x 4 . "| Example: %s\n",
             $e->{swahili_example}
             if $s{examples} and $e->{swahili_example};
-
+ 
         printf ' ' x 15 . "| Def.: %s\n",
             $e->{english_definition}
             if $s{verbose} and $e->{english_definition};
-
+ 
         printf ' ' x 15 . "| Def.: %s\n",
             $e->{swahili_definition}
             if $s{verbose} and $e->{swahili_definition};
-
+ 
         my %extra = (
             class => 'Class', terminology => 'Term.', dialect => 'Dialect'
         );
-
-        printf ' ' x 4 . "| %-15s  %-20s  %-20s\n",
+ 
+        printf ' ' x 4 . "| %-15s %-20s %-20s\n",
             map $e->{$_} ? "$extra{$_}: $e->{$_}" : '' => keys %extra
             if $s{verbose} and grep $e->{$_} => keys %extra;
-
+ 
     }
 }
-
+ 
 ################################################################################
 # main program
 ################################################################################
-
+ 
 package main;
-
+ 
 # got args? no? then wait as a shell
-
+ 
 if ( my $arg = join $" => @ARGV ) { # no-shell-interface
-
+ 
     shell->new->cmd($arg);
 }
 else { # shell
-
+ 
     shell->new->cmdloop;
 }
-
+ 
 __END__
