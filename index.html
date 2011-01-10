@@ -29,8 +29,8 @@
 <form onSubmit="return;">
     <p id="form">
     <input type="text" name="q" id="q" value="" />
-    <a href="#" id="s">squeeze?</a>
     <a href="#" id="d">sw -> en</a>
+    <a href="#" id="s">squeeze?</a>
     </p>
 </form>
 
@@ -49,29 +49,33 @@
 
     $("#q").keyup(
         function() {
-            delay(function() { update_results(); }, 250);
+            delay(function() { update_results(0); }, 250);
         }
     );
 
-    function update_results() {
-        $.get("/kamusi.cgi", {
-                'q': $("#q").val(),
-                's': $("#s").data('value'),
-                'd': $("#d").data('value')
-            },
-            function(data) {
-                $("#result").fadeOut(200);
-                $("#result").hide()
-                $("#result").html(data);
-                $("#result").fadeIn(200);
-            }
-        );
+    function update_results(force) {
+        if($("#q").val().length >= 2 && (force || $("#q").val() != $("#q").data('old'))) {
+            $("#q").data('old', $("#q").val()); // save previous value (cursor->noop)
+            $("#result").fadeOut(200);
+            $.get("/kamusi.cgi", {
+                    'q': $("#q").val(),
+                    's': $("#s").data('value'),
+                    'd': $("#d").data('value')
+                },
+                function(data) {
+                    // $("#result").fadeOut(200);
+                    // $("#result").hide()
+                    $("#result").html(data);
+                    $("#result").fadeIn(200)
+                }
+            );
+        }
     }
 
     $("#s").click(function() {
         $(this).data('value', !$(this).data('value'));
         $(this).text('squeeze' + ($(this).data('value')?'!':'?'));
-        update_results();
+        update_results(1);
     });
 
     $("#d").click(function() {
@@ -82,7 +86,7 @@
             $(this).data('value', 'sw');
             $(this).text('sw->en');
         }
-        update_results();
+        update_results(1);
     });
 
     $("#q").focus();
