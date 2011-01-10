@@ -26,7 +26,7 @@
 
 <body>
 
-<form onSubmit="return;">
+<form>
     <p id="form">
     <input type="text" name="q" id="q" value="" />
     <a href="#" id="d">sw -> en</a>
@@ -89,6 +89,7 @@
         update_results(1);
     });
 
+    $("form").submit(function() { update_results(1); return false; });
     $("#q").focus();
     $("#s").data('value', false);
     $("#d").data('value', 'sw');
